@@ -2,3 +2,6 @@
 /src/models
 /src/data
 /node_modules
+
+*.drawio
+*.drawio.bkp
