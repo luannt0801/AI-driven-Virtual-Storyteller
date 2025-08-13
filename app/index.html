@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Story Teller</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>📖 Story Teller</h1>
+    <p>Create stories, illustrations and voiceovers</p>
+  </header>
+
+  <main>
+    <div class="input-box">
+      <label for="prompt">Storytelling requirements:</label><br/>
+      <textarea id="prompt" placeholder="Example: A cat explores the universe with his robot buddy."></textarea>
+      <br/>
+      <button id="generateBtn">Generate Story</button>
+    </div>
+
+    <div id="visual" class="visual"></div>
+    <div id="storyOutput" class="story-output"></div>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
