@@ -58,3 +58,47 @@ Expected
                     |   Story Player|
                     +---------------+
 ```
+
+---
+
+aidriven-storyteller/
+├── frontend/               # UI React (Next.js + Tailwind + shadcn/ui)
+│   ├── app/                # App Router (nếu dùng Next.js 13+)
+│   │   ├── page.tsx        # Trang chính chứa UI
+│   │   ├── globals.css     # CSS chung
+│   │   └── layout.tsx      # Layout app
+│   ├── components/         # Các component UI tách riêng
+│   │   ├── StoryConfig.tsx # Form nhập prompt & config
+│   │   ├── StepProgress.tsx# Hiển thị tiến trình từng bước
+│   │   └── OutputPanel.tsx # Khu vực Story, Audio, Video
+│   ├── lib/                # Hàm tiện ích frontend
+│   │   ├── api.ts          # Gọi API tới backend
+│   │   └── types.ts        # Khai báo TypeScript type chung
+│   ├── public/             # Ảnh/logo tĩnh
+│   ├── package.json
+│   └── ...
+│
+└── backend/                # Server chạy mô hình AI + API
+    ├── app/
+    │   ├── __init__.py
+    │   ├── main.py         # FastAPI entrypoint
+    │   ├── routes/         # Tách route API theo nhóm
+    │   │   ├── gpt2.py     # Route tạo story từ GPT-2
+    │   │   ├── bark.py     # Route TTS với suno/bark-small
+    │   │   ├── sd.py       # Route Stable Diffusion v1-5
+    │   │   └── assemble.py # Route ghép audio + video
+    │   ├── services/       # Logic gọi model, xử lý dữ liệu
+    │   │   ├── gpt2_service.py
+    │   │   ├── bark_service.py
+    │   │   ├── sd_service.py
+    │   │   └── assemble_service.py
+    │   ├── workers/        # Nếu có background job queue
+    │   │   ├── worker.py
+    │   │   └── tasks.py
+    │   ├── utils/          # Hàm tiện ích backend (ffmpeg, đọc/ghi file)
+    │   │   ├── ffmpeg_utils.py
+    │   │   └── file_utils.py
+    │   ├── models/         # (tuỳ) Dataclass / Pydantic models
+    │   └── config.py       # Cấu hình app (path model, key API,...)
+    ├── requirements.txt    # Python dependencies
+    └── README.md

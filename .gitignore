@@ -1,3 +1,4 @@
 /luan
-/models
-/data
+/src/models
+/src/data
+/node_modules
