@@ -2,6 +2,12 @@
 /src/models
 /src/data
 /node_modules
+/api/node_modules
+/_trash
+
+/models
+
+*__pycache__
 
 *.drawio
 *.drawio.bkp
