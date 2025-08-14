@@ -1,4 +1,5 @@
-import os
+import re
+import numpy as np
 import torch
 import scipy
 from transformers import BarkModel, AutoProcessor
@@ -14,25 +15,40 @@ class BarkTTS:
         self.device = device or ("cuda:0" if torch.cuda.is_available() else "cpu")
 
         # Load model & processor (offline if available, otherwise download)
-        if os.path.exists(os.path.join(model_path, "config.json")) and \
-           os.path.exists(os.path.join(model_path, "preprocessor_config.json")):
-            print("Loading Bark model & processor from local storage...")
-            self.model = BarkModel.from_pretrained(model_path, trust_remote_code=True).to(self.device)
-            self.processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
-        else:
-            print("Downloading Bark model & processor from Hugging Face...")
-            self.model = BarkModel.from_pretrained(
-                "suno/bark-small",
-                trust_remote_code=True,
-                cache_dir=model_path
-            ).to(self.device)
-            self.processor = AutoProcessor.from_pretrained(
-                "suno/bark-small",
-                cache_dir=model_path
-            )
-            # Save locally for offline usage
-            self.model.save_pretrained(model_path)
-            self.processor.save_pretrained(model_path)
+        # if os.path.exists(os.path.join(model_path, "config.json")) and \
+        #    os.path.exists(os.path.join(model_path, "preprocessor_config.json")):
+        #     print("Loading Bark model & processor from local storage...")
+        #     self.model = BarkModel.from_pretrained(model_path, trust_remote_code=True).to(self.device)
+        #     self.processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
+        # else:
+        #     print("Downloading Bark model & processor from Hugging Face...")
+        #     self.model = BarkModel.from_pretrained(
+        #         "suno/bark-small",
+        #         trust_remote_code=True,
+        #         cache_dir=model_path
+        #     ).to(self.device)
+        #     self.processor = AutoProcessor.from_pretrained(
+        #         "suno/bark-small",
+        #         cache_dir=model_path
+        #     )
+        #     # Save locally for offline usage
+        #     self.model.save_pretrained(model_path)
+        #     self.processor.save_pretrained(model_path)
+
+        self.model = BarkModel.from_pretrained(self.model_path, trust_remote_code=True).to(self.device)
+        self.processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
+
+        print(f"Loading Bark TTS model from local path: {self.model_path}")
+        self.model = BarkModel.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+            local_files_only=True  
+        ).to(self.device)
+
+        self.processor = AutoProcessor.from_pretrained(
+            model_path,
+            local_files_only=True 
+        )
 
         # Ensure pad token is set
         if self.processor.tokenizer.pad_token is None:
@@ -40,7 +56,7 @@ class BarkTTS:
 
         self.sampling_rate = self.model.generation_config.sample_rate
 
-    def generate_speech(self, text, voice_preset=None, output_wav="bark_out.wav",
+    def generate_all_speech(self, text, voice_preset=None, output_wav="bark_out.wav",
                         num_beams=None, temperature=None, semantic_temperature=None):
         """
         Generate speech from text.
@@ -75,6 +91,49 @@ class BarkTTS:
         # Save to wav file
         scipy.io.wavfile.write(output_wav, rate=self.sampling_rate, data=speech_output[0].cpu().numpy())
         print(f"Speech saved to: {output_wav}")
+
+        return output_wav
+    
+
+    def generate_speech(self, text, voice_preset=None, output_wav="bark_out.wav",
+                        num_beams=None, temperature=None, semantic_temperature=None):
+        """
+        Generate speech from text, sentence-by-sentence, and merge into one WAV.
+        """
+        sentences = re.split(r'(?<=[\.\!\?])\s+', text.strip())
+        sentences = [s.strip() for s in sentences if s.strip()]
+
+        all_audio = []
+
+        for idx, sentence in enumerate(sentences, 1):
+            print(f"[Bark] Generating speech for sentence {idx}/{len(sentences)}: {sentence}")
+
+            if voice_preset:
+                inputs = self.processor(sentence, voice_preset=voice_preset)
+            else:
+                inputs = self.processor(sentence)
+
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}
+
+            gen_kwargs = {}
+            if num_beams is not None:
+                gen_kwargs["num_beams"] = num_beams
+            if temperature is not None:
+                gen_kwargs["temperature"] = temperature
+            if semantic_temperature is not None:
+                gen_kwargs["semantic_temperature"] = semantic_temperature
+
+            with torch.no_grad():
+                speech_output = self.model.generate(**inputs, **gen_kwargs)
+
+            # Ghép audio
+            audio_np = speech_output[0].cpu().numpy()
+            all_audio.append(audio_np)
+
+        merged_audio = np.concatenate(all_audio, axis=0)
+
+        scipy.io.wavfile.write(output_wav, rate=self.sampling_rate, data=merged_audio)
+        print(f"[Bark] Full speech saved to: {output_wav}")
 
         return output_wav
 
