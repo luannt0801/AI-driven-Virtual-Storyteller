@@ -9,23 +9,24 @@ git remote add origin https://github.com/luannt0801/-AI-driven-Virtual-Storytell
 git push -u origin main -->
 
 
-# Project Title: AI-driven Virtual Storyteller | Code: 242B1MDCP01 
-Generate narrated stories with matching visuals and background music.
+[![transformers](https://img.shields.io/badge/transformer-4.55.0-blue)](https://huggingface.co/docs/transformers/installation)
+[![torch](https://img.shields.io/badge/torch-2.2.1-green)](https://pytorch.org/get-started/locally/)
+[![cuda](https://img.shields.io/badge/cuda-12.06-pink)](https://huggingface.co/docs/transformers/installation)
+[![Python](https://img.shields.io/badge/Python-3.12-red)](https://www.python.org/downloads/release/python-3120)
+[![Luan](https://img.shields.io/badge/Luan-8.1.2002-white)](https://github.com/luannt0801)
+
+# StorieAlate
+
+StorieAlate is an AI-powered virtual storyteller that generates immersive, narrated stories accompanied by dynamic visuals and background music. Combining cutting-edge NLP, text-to-speech synthesis, and procedural or GAN-based visual generation, StorieAlate brings stories to life in a fully interactive and multi-sensory experience.
+
+![StorieAlate](/docs/imgs/StoryTeller.png)
 
 ---
 
-Requirements
-- NLP module for story scripts 
-- Text-to-speech with emotion 
-- Visual scene generator (GANs or procedural) 
-- API for story/visual input
-Expected 
-- End-to-end storytelling player 
-- API for content creation 
-- Demo stories
+## Architect
 
 
-```
+```bash
           +-------------------+
           |  User/API Client  |
           +--------+----------+
@@ -59,46 +60,14 @@ Expected
                     +---------------+
 ```
 
----
+### GPT-2
 
-aidriven-storyteller/
-├── frontend/               # UI React (Next.js + Tailwind + shadcn/ui)
-│   ├── app/                # App Router (nếu dùng Next.js 13+)
-│   │   ├── page.tsx        # Trang chính chứa UI
-│   │   ├── globals.css     # CSS chung
-│   │   └── layout.tsx      # Layout app
-│   ├── components/         # Các component UI tách riêng
-│   │   ├── StoryConfig.tsx # Form nhập prompt & config
-│   │   ├── StepProgress.tsx# Hiển thị tiến trình từng bước
-│   │   └── OutputPanel.tsx # Khu vực Story, Audio, Video
-│   ├── lib/                # Hàm tiện ích frontend
-│   │   ├── api.ts          # Gọi API tới backend
-│   │   └── types.ts        # Khai báo TypeScript type chung
-│   ├── public/             # Ảnh/logo tĩnh
-│   ├── package.json
-│   └── ...
-│
-└── backend/                # Server chạy mô hình AI + API
-    ├── app/
-    │   ├── __init__.py
-    │   ├── main.py         # FastAPI entrypoint
-    │   ├── routes/         # Tách route API theo nhóm
-    │   │   ├── gpt2.py     # Route tạo story từ GPT-2
-    │   │   ├── bark.py     # Route TTS với suno/bark-small
-    │   │   ├── sd.py       # Route Stable Diffusion v1-5
-    │   │   └── assemble.py # Route ghép audio + video
-    │   ├── services/       # Logic gọi model, xử lý dữ liệu
-    │   │   ├── gpt2_service.py
-    │   │   ├── bark_service.py
-    │   │   ├── sd_service.py
-    │   │   └── assemble_service.py
-    │   ├── workers/        # Nếu có background job queue
-    │   │   ├── worker.py
-    │   │   └── tasks.py
-    │   ├── utils/          # Hàm tiện ích backend (ffmpeg, đọc/ghi file)
-    │   │   ├── ffmpeg_utils.py
-    │   │   └── file_utils.py
-    │   ├── models/         # (tuỳ) Dataclass / Pydantic models
-    │   └── config.py       # Cấu hình app (path model, key API,...)
-    ├── requirements.txt    # Python dependencies
-    └── README.md
+![gpt-2](/docs/imgs/gpt-2.png)
+
+### Suno-bark
+
+![gpt-2](/docs/imgs/suno-bark.png)
+
+### Stable-diffusion
+
+![gpt-2](/docs/imgs/stable-diffusion.png)
