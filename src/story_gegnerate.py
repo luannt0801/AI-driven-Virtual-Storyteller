@@ -16,7 +16,7 @@ class StoryGenerator:
         # Load tokenizer and model
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, trust_remote_code=True, cache_dir=model_path)
         self.model = AutoModelForCausalLM.from_pretrained(self.model_name, trust_remote_code=True, cache_dir=model_path)
-        self.model.to(self.device)
+        self.model.to(self.device) # type: ignore
 
         # Optional: load dataset 
         self.dataset = None

@@ -1,24 +1,14 @@
 import subprocess
-import sys
 import os
 
-# Đường dẫn python.exe của venv
-venv_python = r"D:\2025\Master BKHN\Ky thuat lap trinh noi dung so\AI-driven-Virtual-Storyteller\luan\Scripts\python.exe"
+def run_story_generator(prompt):
+    bat_file = r'd:\2025\Master BKHN\Ky thuat lap trinh noi dung so\AI-driven-Virtual-Storyteller\run.bat'
+    command = [bat_file]
+    env = dict(**os.environ)
+    env['PROMPT'] = prompt
+    process = subprocess.Popen(command, shell=True, env=env)
+    process.communicate()
 
-# Lệnh chạy pipeline
-cmd = [
-    venv_python,
-    "main_2.py",
-    "--prompt", "tell me a story about a princess and dragon",
-    "--gpt_model_path", "../models/gpt2",
-    "--sd_model_path", "../models/stable-diffusion-v1-5",
-    "--sd_model_id", "runwayml/stable-diffusion-v1-5",
-    "--bark_model_path", "../models/suno_bark_small",
-    "--voice_preset", "v2/en_speaker_6",
-    "--split_mode", "sentence",
-    "--max_images", "8",
-    "--output_dir", "outputs",
-    "--video_name", "story_video.mp4"
-]
-
-subprocess.run(cmd)
+if __name__ == "__main__":
+    user_prompt = input("Enter your story prompt: ")
+    run_story_generator(user_prompt)
