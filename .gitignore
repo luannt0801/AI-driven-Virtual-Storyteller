@@ -4,7 +4,10 @@
 /node_modules
 /api/node_modules
 /_trash
-
+/outputs/images
+/outputs/narration.wav
+/outputs/story_video.mp4
+/outputs/story.txt
 /models
 
 *__pycache__
